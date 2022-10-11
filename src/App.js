@@ -4,22 +4,32 @@ import { useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSearch } from '@fortawesome/free-solid-svg-icons'
 import { faStar } from '@fortawesome/free-solid-svg-icons'
-import FavoritesList from './components/FavoritesList.js'
-import Favorites from './components/Favorites.js'
 
-function App() {
+function App(props) {
+
   const [searchTerm, setSearchTerm] = useState('');
-
-  const addToFavs = (payload) => {
-    let oldArray = '';
-    let newArray = [...oldArray, payload];
-    setSearchTerm(newArray);
-
-  }
 
   const onSearch = (searchTerm) => {
     setSearchTerm(searchTerm)
   }
+
+  const [favorite, setFavorite] = useState([]);
+
+  const addToFavorite = city => {
+    if (!favorite.includes(city)) setFavorite(favorite.concat(city));
+    console.log(city);
+  };
+
+  const removeFavorite = city => {
+    let index = favorite.indexOf(city);
+    console.log(index);
+    let temp = [...favorite.slice(0, index), ...favorite.slice(index + 1)];
+    setFavorite(temp);
+    console.log(temp);
+  };
+
+  let findfavorite = Gradovi.filter(val => favorite.includes(val.city));
+
 
   return (
     <div className="App">
@@ -46,15 +56,27 @@ function App() {
       }).slice(0, 5)
       .map((val, key) => {
         return <ul className="Lista" key={key}>
-                <li onClick={() => onSearch(val.city)}>{val.city}</li>
-                <button onClick={() => addToFavs()}>
+                <input readOnly value={val.city} onClick={() => onSearch(val.city)} className="gradovi"/>
+                <button  onClick={() => addToFavorite(val.city)}>
                 <FontAwesomeIcon icon={faStar}/>
                 </button>
                </ul>
       })}
       </div>
-      <FavoritesList/>
-      <Favorites />
+      <div className="favorite__list">
+        <h2>favorite recipes</h2>
+          {findfavorite.map(val => {
+            return (
+              <div key={val.city} className="favs">
+              <h2 className="">{val.city}</h2>
+
+              <button onClick={() => removeFavorite(val.city)}>
+              remove favorite
+              </button>
+              </div>
+            );
+          })}
+          </div>
     </div>
   );
 }
