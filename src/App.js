@@ -4,9 +4,18 @@ import { useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSearch } from '@fortawesome/free-solid-svg-icons'
 import { faStar } from '@fortawesome/free-solid-svg-icons'
+import FavoritesList from './components/FavoritesList.js'
+import Favorites from './components/Favorites.js'
 
 function App() {
   const [searchTerm, setSearchTerm] = useState('');
+
+  const addToFavs = (payload) => {
+    let oldArray = '';
+    let newArray = [...oldArray, payload];
+    setSearchTerm(newArray);
+
+  }
 
   const onSearch = (searchTerm) => {
     setSearchTerm(searchTerm)
@@ -38,12 +47,14 @@ function App() {
       .map((val, key) => {
         return <ul className="Lista" key={key}>
                 <li onClick={() => onSearch(val.city)}>{val.city}</li>
-                <FontAwesomeIcon icon={faStar}
-                onClick
-                />
+                <button onClick={() => addToFavs()}>
+                <FontAwesomeIcon icon={faStar}/>
+                </button>
                </ul>
       })}
       </div>
+      <FavoritesList/>
+      <Favorites />
     </div>
   );
 }
