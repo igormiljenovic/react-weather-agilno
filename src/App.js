@@ -2,7 +2,6 @@ import './App.css';
 import Gradovi from './gradovi.json'
 import React, { useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faSearch } from '@fortawesome/free-solid-svg-icons'
 import { faStar } from '@fortawesome/free-solid-svg-icons'
 
 function App(response) {
@@ -34,8 +33,9 @@ function App(response) {
 
   const [weatherData, setWeatherData] = useState([{}]);
 
-  const getWeather = (event) => {
-    if (event.key === "Enter") {
+  const getWeather = (event, city) => {
+    var code = event.keyCode || event.which;
+    if (code === "13") {
       fetch('https://api.open-meteo.com/v1/forecast?latitude=' + grad.map(val => {
         return (val.lat)}) + '&longitude=' + grad.map(val => {return(val.lng)}) + '&hourly=temperature_2m,relativehumidity_2m,dewpoint_2m,apparent_temperature,weathercode,pressure_msl,surface_pressure,cloudcover,windspeed_10m,windspeed_80m,windspeed_120m,windspeed_180m,soil_temperature_0cm,soil_temperature_6cm,soil_temperature_18cm,soil_temperature_54cm').then(
        response => response.json()
@@ -46,7 +46,33 @@ function App(response) {
         }
       )
     }
+    else {
+      let index = findfavorite.indexOf(city);
+      let favsClick = findfavorite.slice(index);
+      fetch('https://api.open-meteo.com/v1/forecast?latitude=' + favsClick.map(val => {
+        return (val.lat)}) + '&longitude=' + favsClick.map(val => {return(val.lng)}) + '&hourly=temperature_2m,relativehumidity_2m,dewpoint_2m,apparent_temperature,weathercode,pressure_msl,surface_pressure,cloudcover,windspeed_10m,windspeed_80m,windspeed_120m,windspeed_180m,soil_temperature_0cm,soil_temperature_6cm,soil_temperature_18cm,soil_temperature_54cm').then(
+       response => response.json()
+      ).then(
+        data => {
+          setWeatherData(data)
+          console.log(weatherData)
+        }
+      )
+    }
   }
+
+    const getWeatherOnClick = (e, val) => {
+      fetch('https://api.open-meteo.com/v1/forecast?latitude=' + val.lat + '&longitude=' + val.lng + '&hourly=temperature_2m,relativehumidity_2m,dewpoint_2m,apparent_temperature,weathercode,pressure_msl,surface_pressure,cloudcover,windspeed_10m,windspeed_80m,windspeed_120m,windspeed_180m,soil_temperature_0cm,soil_temperature_6cm,soil_temperature_18cm,soil_temperature_54cm').then(
+       response => response.json()
+      ).then(
+        data => {
+          setWeatherData(data)
+          console.log(weatherData)
+
+        }
+      )
+  }
+
 
   return (
     <div className="App">
@@ -60,9 +86,6 @@ function App(response) {
         onKeyPress={getWeather}
         />
 
-        <button type="submit" class="searchButton">
-        <FontAwesomeIcon icon={faSearch} />
-        </button>
       </div>
       <div className="search-res">
       {Gradovi.filter((val) => {
@@ -74,7 +97,7 @@ function App(response) {
       }).slice(0, 5)
       .map((val, key) => {
         return <ul className="Lista" key={key}>
-                <input readOnly value={val.city} onClick={() => onSearch(val.city)} className="gradovi"/>
+                <input readOnly value={val.city} onClick={((e) => getWeatherOnClick(e, val))} className="gradovi"/>
                 <button  onClick={() => addToFavorite(val.city)}>
                 <FontAwesomeIcon icon={faStar}/>
                 </button>
@@ -86,7 +109,7 @@ function App(response) {
           {findfavorite.map(val => {
             return (
               <div key={val.city} className="favs">
-              <h4 className="">{val.city}</h4>
+              <h4 className=""><input readOnly value={val.city} onClick={((e) => getWeatherOnClick(e, val))} className="gradovi"/></h4>
 
               <button onClick={() => removeFavorite(val.city)}>
               remove favorite
