@@ -3,6 +3,7 @@ import Gradovi from './gradovi.json'
 import React, { useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faStar } from '@fortawesome/free-solid-svg-icons'
+import ApiChart from './components/ApiChart'
 
 function App(response) {
 
@@ -123,6 +124,7 @@ function App(response) {
             <p>{weatherData.latitude}</p>
             <p>{weatherData.elevation}</p>
           </div>
+          <ApiChart/>
     </div>
   );
 }
